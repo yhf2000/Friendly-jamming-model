@@ -13,14 +13,22 @@ protected:
     // 节点向量
     vector<Node> nodes;
     // 当前轮数
-    int RunRound;
+    int RunRound, BlockSize;
 
     // 获取所在的位置
     int getGrid(const Node &node) const {
         if (gridLength == -1) return -1;
-        int xv = (node.get_x() / gridLength) % 10;
-        int yv = (node.get_y() / gridLength) % 10;
+        int xv = ((node.getX() + CircleR) / gridLength) % 10;
+        int yv = ((node.getY() + CircleR) / gridLength) % 10;
         return xv * 10 + yv;
+    }
+
+    int getBlock(const Node &node) const{
+        if(gridLength == -1) return -1;
+        int xv = ((node.getX() + CircleR) / gridLength) / 10;
+        int yv = ((node.getY() + CircleR) / gridLength) / 10;
+        int num = (CircleR * 2 + gridLength - 1) / gridLength; // 一行有多少块
+        return xv * num + yv;
     }
 
     // 判断点是否在圆内
@@ -66,27 +74,34 @@ public:
      */
     BaseCircle(int CommunicationRadius, int FieldRadius, int n, int gridLength = -1) :
             CircleR(FieldRadius), n(n), RunRound(0),
-            R(CommunicationRadius), gridLength(gridLength) {}
+            R(CommunicationRadius), gridLength(gridLength) {
+        BlockSize = (CircleR * 2 + gridLength - 1) / gridLength;
+        BlockSize = BlockSize * BlockSize;
+    }
 
-    void generateNodeWithUniform() {
+    void generateNodeWithUniform(bool global = false) {
         // 生成时判断是否在圆内
         unordered_set<Node, NodeHash, NodeEqu> exist;
 
         // 定义随机数生成器
         uniform_int_distribution<int> randomGen(-CircleR, CircleR);
 
-        while(nodes.size() != n){
+
+
+        while(nodes.size() != n + global){
             // 清空原有节点向量
             nodes.clear();
 
+            if(global) nodes.emplace_back(0, 0);
             // 随机生成点
             int failed = 0;
             // 连续 100 次重复，说明过于稠密
-            while (exist.size() < n && failed < 200) {
+            while (nodes.size() < n + global && failed < 200) {
                 Node newNode(randomGen(rand_eng), randomGen(rand_eng));
                 // 判断是否在圆内，判断是否在曾经存在
-                if (isInCircle(newNode) && !exist.count(newNode) && newNode.get_x() != 0 && newNode.get_y() != 0) {
-                    newNode.set_grid(getGrid(newNode));
+                if (isInCircle(newNode) && !exist.count(newNode) && newNode.getX() != 0 && newNode.getY() != 0) {
+                    newNode.setGrid(getGrid(newNode));
+                    newNode.setBlock(getBlock(newNode));
                     exist.insert(newNode), nodes.push_back(newNode);
                     failed = 0;
                 } else failed++;
@@ -95,7 +110,7 @@ public:
 
         // 检查是否成功生成 n 个点
         // 断言失败说明 n 对于当前的 CircleR 过大
-        assert(nodes.size() == n);
+        assert(nodes.size() == n + global);
 //        nodes.resize(n);
     }
 
@@ -123,7 +138,7 @@ public:
         vector<Node> SendNode;
 
         // 节点初始化
-        for (const auto &x:in_r_index) nodes[x].set_state(Active);
+        for (const auto &x:in_r_index) nodes[x].setState(Active);
         // 算法迭代
         while (nodeLeft > 1) {
             // 一轮迭代
@@ -134,26 +149,26 @@ public:
 
             // 进行标记
             for (const auto &x: in_r_index) {
-                if (nodes[x].get_state() == Active) {
+                if (nodes[x].getState() == Active) {
                     if (randomGen(rand_eng) <= p) {
                         SendNode.emplace_back(nodes[x]);
                         sendNum++;
-                    } else nodes[x].set_state(Receive);
+                    } else nodes[x].setState(Receive);
                 }
             }
 
             // 判断是否收到消息，且改变对应的状态
             for (const auto &x: in_r_index) {
-                if (nodes[x].get_state() == Receive) {
+                if (nodes[x].getState() == Receive) {
                     if (sendNum && sinrCalculate.canGetSignal(nodes[x], SendNode))
-                        nodes[x].set_state(Inactive), nodeLeft--;
+                        nodes[x].setState(Inactive), nodeLeft--;
                 }
             }
 
             // 设置没有收到消息的节点为初始状态
             for (const auto &x: in_r_index) {
-                if (nodes[x].get_state() == Receive) {
-                    nodes[x].set_state(Active);
+                if (nodes[x].getState() == Receive) {
+                    nodes[x].setState(Active);
                 }
             }
 
@@ -163,7 +178,7 @@ public:
         // 获取剩余的最后一个点
         int resIndex = -1;
         for (const auto &x:in_r_index) {
-            if (nodes[x].get_state() == Active) {
+            if (nodes[x].getState() == Active) {
                 if (resIndex != -1) assert(false); // 断言不存在两个合法的点
                 else resIndex = x;
             }

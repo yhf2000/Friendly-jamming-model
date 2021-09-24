@@ -16,25 +16,31 @@ class Node {
     // 节点状态
     NodeState state;
     // 所在网格的编号
-    int gridID;
+    int gridID, blockID;
 public:
     // 构造函数
-    Node(int x=0, int y=0, int gridID = -1) :
+    Node(int x = 0, int y = 0, int gridID = -1) :
             x(x), y(y), state(Active), gridID(gridID) {}
 
-    int get_x() const { return x; }
+    int getX() const { return x; }
 
-    int get_y() const { return y; }
+    int getY() const { return y; }
 
     int get_disFromOriSqr() const { return x * x + y * y; }
 
     double get_disFromOri() const { return sqrt(get_disFromOriSqr()); }
 
-    void set_state(NodeState state_prop) { state = state_prop; }
+    void setState(NodeState state_prop) { state = state_prop; }
 
-    void set_grid(int grid) { gridID = grid; }
+    void setGrid(int grid) { gridID = grid; }
 
-    NodeState get_state() const { return state; }
+    void setBlock(int block) { blockID = block; }
+
+    int getGridId() const { return gridID; }
+
+    int getBlockId() const { return blockID; }
+
+    NodeState getState() const { return state; }
 
     Node operator-(const Node &node) const { return {x - node.x, y - node.y}; }
 };
@@ -43,7 +49,7 @@ public:
 class NodeHash {
 public:
     size_t operator()(const Node &node) const {
-        return node.get_x() * (1 << 20) + node.get_y();
+        return node.getX() * (1 << 20) + node.getY();
     }
 };
 
@@ -51,8 +57,8 @@ public:
 class NodeEqu {
 public:
     bool operator()(const Node &node1, const Node &node2) const {
-        return node1.get_x() == node2.get_x() &&
-               node1.get_y() == node2.get_y();
+        return node1.getX() == node2.getX() &&
+                node1.getY() == node2.getY();
     }
 };
 

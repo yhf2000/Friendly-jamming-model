@@ -32,14 +32,14 @@ public:
      * @param Sender
      * @return 当前的信号强度之和
      */
-    double SignalStrength(Node &Receiver, vector<Node> &Sender) const {
+    double SignalStrength(const Node &Receiver, vector<Node> &Sender) const {
         double res = 0;
         for (const auto x:Sender)
             res += P / pow((Receiver - x).get_disFromOri(), Alpha);
         return res;
     }
 
-    bool canGetSignal(Node &Receiver, vector<Node> &Sender) const {
+    bool canGetSignal(const Node &Receiver, vector<Node> &Sender) const {
         return SignalStrength(Receiver, Sender) >= N * (1 + p);
     }
 
@@ -49,7 +49,7 @@ public:
      * @param Sender
      * @return 返回满足不等式的节点的 index
      */
-    int Listen(Node &Receiver, vector<Node> &Sender) const {
+    int Listen(const Node &Receiver, vector<Node> &Sender) const {
         // 分母
         double all = N + SignalStrength(Receiver, Sender);
 
