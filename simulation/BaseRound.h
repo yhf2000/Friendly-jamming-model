@@ -92,7 +92,11 @@ public:
             // 清空原有节点向量
             nodes.clear();
 
-            if(global) nodes.emplace_back(0, 0);
+            if(global) {
+                nodes.emplace_back(0, 0);
+                nodes.back().setGrid(getGrid(nodes.back()));
+                nodes.back().setBlock(getBlock(nodes.back()));
+            }
             // 随机生成点
             int failed = 0;
             // 连续 100 次重复，说明过于稠密

@@ -84,7 +84,6 @@ class GlobalBroadcast : public BaseCircle {
         for (const auto &x:Sender) {
             if (nodes[x].getState() == Active) {
                 leaderID.emplace_back(x);
-                receiveNumber ++;
             }
         }
         return leaderID;
@@ -125,6 +124,7 @@ class GlobalBroadcast : public BaseCircle {
                 if (!bitmap[i]) {
                     if (sinrCalculate.Listen(nodes[i], Sender) != -1) {
                         bitmap[i] = true;
+                        receiveNumber ++;
                     }
                 }
             }
@@ -132,6 +132,7 @@ class GlobalBroadcast : public BaseCircle {
         }
     }
 
+public:
     /**
      * @param BroadcastID 初始广播者 ID
      * @return 时间复杂度
@@ -159,7 +160,7 @@ class GlobalBroadcast : public BaseCircle {
             }
 
             // 若连续两次都没有节点收到新的点 且 超过 n/10 的点已经收到了消息  退出
-            if(zeroRound >= 2 && receiveNumber > n / 10){
+            if(zeroRound >= 3 && receiveNumber > n / 10){
                 break;
             }
 
@@ -178,6 +179,7 @@ class GlobalBroadcast : public BaseCircle {
             }
 
             TotRound += max_Round;
+            cerr << receiveNumber << endl;
         }
         return TotRound;
     }
