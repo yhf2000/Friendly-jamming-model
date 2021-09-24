@@ -112,17 +112,20 @@ class GlobalBroadcast : public BaseCircle {
 
             // 选出实际进行传信的节点
             vector<Node> Sender;
+            // Jammer 始终发送信号
+            Sender.emplace_back(nodes[JammerID]);
+
             for (const auto &x:rt) {
                 if (randomGen(rand_eng) <= p_broadCast * p_global)
                     Sender.emplace_back(nodes[x]);
             }
-            // Jammer 始终发送信号
-            Sender.emplace_back(nodes[JammerID]);
+
 
             // 检查所有没有收到消息的节点，判断是否能成功接收到消息
             for (int i = 0; i < n; i++) {
                 if (!bitmap[i]) {
-                    if (sinrCalculate.Listen(nodes[i], Sender) != -1) {
+                    int rcvID = sinrCalculate.Listen(nodes[i], Sender);
+                    if (rcvID != -1 && rcvID != 0) {
                         bitmap[i] = true;
                         receiveNumber ++;
                     }
@@ -160,14 +163,14 @@ public:
             }
 
             // 若连续两次都没有节点收到新的点 且 超过 n/10 的点已经收到了消息  退出
-            if(zeroRound >= 3 && receiveNumber > n / 10){
+            if(zeroRound >= 10 && receiveNumber > n / 10){
                 break;
             }
 
             nxtRoundNodeID.clear();
             // 2  统计已收到信号的单元
             for(int i = 0; i < n; i ++){
-                if(bitmap[i])
+                if(bitmap[i] && i != JammerID)
                     nxtRoundNodeID[nodes[i].getGridId()].emplace_back(i);
             }
 
@@ -220,6 +223,7 @@ public:
 
         // 选择阻塞点的位置
         JammerID = selectJammerIndex(r, p_leaderElection, Eavesdropper);
+        cerr << "JJJ " << JammerID << endl;
     }
 
 };
