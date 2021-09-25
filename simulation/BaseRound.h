@@ -164,7 +164,8 @@ public:
             // 判断是否收到消息，且改变对应的状态
             for (const auto &x: in_r_index) {
                 if (nodes[x].getState() == Receive) {
-                    if (sendNum && sinrCalculate.canGetSignal(nodes[x], SendNode))
+                    if (sendNum)
+                        // && sinrCalculate.canGetSignal(nodes[x], SendNode)
                         nodes[x].setState(Inactive), nodeLeft--;
                 }
             }

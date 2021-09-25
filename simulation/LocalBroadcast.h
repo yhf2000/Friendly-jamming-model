@@ -193,7 +193,7 @@ public:
                     }
 //                    cerr << rep << endl;
                 }
-                for (int i = 0; i < 1000; i++) {
+                for (int i = 0; i < 5000; i++) {
                     auto rt = multi[i];
                     if (get<0>(rt) != -1) {
                         localTime.add(r, get<1>(rt));

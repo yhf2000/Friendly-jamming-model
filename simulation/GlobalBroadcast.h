@@ -13,12 +13,6 @@ class GlobalBroadcast : public BaseCircle {
     map<int, vector<int>> nxtRoundNodeID;
     int JammerID, BroadcastID, receiveNumber;
 
-    int countBitmap() const {
-        int res = 0;
-        for (const auto &x:bitmap) res += x;
-        return res;
-    }
-
     /**
      * 在一个小时间片内的广播
      * @param Sender    所有有机会发送的点
@@ -51,7 +45,7 @@ class GlobalBroadcast : public BaseCircle {
             // 进行标记
             for (const auto &x: Sender) {
                 if (nodes[x].getState() == Active) {
-                    if (randomGen(rand_eng) <= p_leaderElection) {
+                    if (randomGen(rand_eng) <= p_leaderElection * p_global) {
                         SendNode.emplace_back(nodes[x]);
                         sendNum++;
                     } else nodes[x].setState(Receive);
@@ -163,7 +157,7 @@ public:
             }
 
             // 若连续两次都没有节点收到新的点 且 超过 n/10 的点已经收到了消息  退出
-            if(zeroRound >= 10 && receiveNumber > n / 10){
+            if(zeroRound >= 3 && receiveNumber > n / 10){
                 break;
             }
 

@@ -51,7 +51,7 @@ public:
      */
     int Listen(const Node &Receiver, vector<Node> &Sender) const {
         // 分母
-        double all = N + SignalStrength(Receiver, Sender);
+        double all = N * (1 + p) + SignalStrength(Receiver, Sender);
 
         // 满足不等式的数量，与 index 的标号
         int num = 0, pos = -1;
