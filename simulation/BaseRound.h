@@ -13,7 +13,7 @@ protected:
     // 节点向量
     vector<Node> nodes;
     // 当前轮数
-    int RunRound, BlockSize;
+    long long RunRound, BlockSize;
 
     // 获取所在的位置
     int getGrid(const Node &node) const {

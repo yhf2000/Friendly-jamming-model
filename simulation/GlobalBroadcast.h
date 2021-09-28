@@ -168,11 +168,11 @@ public:
                     nxtRoundNodeID[nodes[i].getGridId()].emplace_back(i);
             }
 
-            int max_Round = 0;
+            long long max_Round = 0;
             for(int i = 0; i < 99; i ++){
                 RunRound = 0;
                 broadcast(i);
-                max_Round = max(max_Round, RunRound);
+                max_Round += max(max_Round, RunRound);
             }
 
             TotRound += max_Round;

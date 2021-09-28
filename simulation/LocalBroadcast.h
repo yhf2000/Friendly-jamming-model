@@ -50,7 +50,7 @@ class LocalBroadcast : public BaseCircle {
     }
 
 public:
-    LocalBroadcast(int CommunicationRadius, int FieldRadius , int n) : BaseCircle(CommunicationRadius, FieldRadius, n) {
+    LocalBroadcast(int CommunicationRadius, int FieldRadius, int n) : BaseCircle(CommunicationRadius, FieldRadius, n) {
         generateNodeWithUniform();
     }
 
@@ -79,7 +79,9 @@ public:
             vector<thread *> t_set(len);
             for (int i = 0; i < len; i++) {
                 int BroadcastIndex = randomGen(rand_eng);
-                while (BroadcastIndex == JammerIndex) BroadcastIndex = randomGen(rand_eng);
+                while (BroadcastIndex == JammerIndex
+                       && nodes[BroadcastIndex].get_disFromOri() <= R)
+                    BroadcastIndex = randomGen(rand_eng);
                 t_set[i] = new thread(fn, right + i, BroadcastIndex);
             }
             for (int i = 0; i < len; i++) {
@@ -150,11 +152,11 @@ public:
 
 };
 
-vector <tuple<int, int>> multi;
+vector<tuple<int, int>> multi;
 
 class LocalBroadcastStaticTime {
 
-    static void run(int R, double p, int n, int r, int i){
+    static void run(int R, double p, int n, int r, int i) {
         LocalBroadcast d(R, R * 2, n);
         multi[i] = d.runWith_r_one(r, p);
     }
@@ -181,7 +183,7 @@ public:
                 multi.clear();
                 multi.resize(rep);
 
-                while(rep > 0){
+                while (rep > 0) {
                     int len = min(rep, maxThread);
                     rep -= len;
                     vector<thread *> t_set(len);
@@ -217,7 +219,7 @@ vector<tuple<int, int, double, double, double, double, double, double>> multi2;
 
 class LocalBroadcastStaticData {
 
-    static void run(int R, double p, int n, int r, int i){
+    static void run(int R, double p, int n, int r, int i) {
         LocalBroadcast d(R, R * 2, n);
         multi2[i] = d.runWith_r(r, p, 100);
     }
@@ -238,7 +240,7 @@ public:
                 multi2.clear();
                 multi2.resize(rep);
 
-                while(rep > 0){
+                while (rep > 0) {
                     int len = min(rep, maxThread / 4);
                     rep -= len;
                     vector<thread *> t_set(len);

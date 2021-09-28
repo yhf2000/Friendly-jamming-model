@@ -11,7 +11,7 @@ int main() {
 
     //// Local Broadcast
 //    LocalBroadcastStaticTime(R, p, "Time.json");
-//    LocalBroadcastStaticData(R, p, "local_statistics.json");
-    auto v = GlobalBroadcast(30, 800, 5000, 15, 0.2, 0.5, 0.4, 30);
-    cout << v.run() << endl;
+    LocalBroadcastStaticData(R, p, "local_statistics.json");
+//    auto v = GlobalBroadcast(80, 500, 100000, 15, 0.02, 0.04, 0.4, 30);
+//    cout << v.run() << endl;
 }
