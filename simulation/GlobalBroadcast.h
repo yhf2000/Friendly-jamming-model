@@ -144,7 +144,7 @@ public:
         bitmap[BroadcastID] = true;
         receiveNumber = 1;
 
-        int TotRound = 0, lstReceiveNumber = receiveNumber, zeroRound = 0;
+        long long TotRound = 0, lstReceiveNumber = receiveNumber, zeroRound = 0;
 
         while (true) {
 
@@ -176,7 +176,7 @@ public:
             }
 
             TotRound += max_Round;
-            cerr << receiveNumber << endl;
+//            cerr << receiveNumber << endl;
         }
         return TotRound;
     }
@@ -217,7 +217,7 @@ public:
 
         // 选择阻塞点的位置
         JammerID = selectJammerIndex(r, p_leaderElection, Eavesdropper);
-        cerr << "JJJ " << JammerID << endl;
+//        cerr << "JJJ " << JammerID << endl;
     }
 
 };
