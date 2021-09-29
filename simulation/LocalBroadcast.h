@@ -4,6 +4,7 @@
 #include "SINR.h"
 #include "BaseRound.h"
 #include "statistics.h"
+#include "utils.h"
 
 class LocalBroadcast : public BaseCircle {
 
@@ -92,9 +93,9 @@ public:
 
 
         // 计算 r1
-        double r1 = CircleR, hf;
+        double r1 = R, hf;
         for (const auto &x: R_data) if (get<0>(x.second) != 0) r1 = min(r1, x.first);
-        hf = (r1 + CircleR) / 2;
+        hf = (r1 + R) / 2;
 
 
         // 统计数据
@@ -225,18 +226,17 @@ class LocalBroadcastStaticData {
     }
 
 public:
-    LocalBroadcastStaticData(int R, double p, const string &output_name) {
+    LocalBroadcastStaticData(int R, double p, const string &output_name, Range n_Range, Range r_Range, int repNum) {
         ofstream out(output_name);
 
         statisticsHalf cover("Cover"), success("Success"), receive("Receive");
         out << "{";
-        for (int n = 5000; n <= 10000; n += 500) {
+        R_for (n, n_Range) {
             cerr << " n " << n << endl;
-            for (int r = 10; r <= 20; r += 1) {
+            R_for(r, r_Range) {
                 cerr << " r " << r << endl;
 
-
-                int rep = 200;
+                int rep = repNum;
                 multi2.clear();
                 multi2.resize(rep);
 
@@ -252,7 +252,7 @@ public:
                     }
 //                    cerr << rep << endl;
                 }
-                for (int i = 0; i < 200; i++) {
+                for (int i = 0; i < repNum; i++) {
                     auto rt = multi2[i];
                     if (get<0>(rt) != -1) {
                         int rn = r;
@@ -273,7 +273,7 @@ public:
             receive.print(out);
 
             out << "]";
-            if (n != 10000) out << ",\n";
+            if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
 
             cover.clear(), success.clear(), receive.clear();
         }
