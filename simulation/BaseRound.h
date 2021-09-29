@@ -40,8 +40,8 @@ protected:
 
     // 获取 safeZone 的半径
     double get_SafeZoneR(SINR &Sp, double r) const {
-        return ((1 + eps) * R * pow(Sp.get_Beta(), 1.0 / Sp.get_Alpha()) /
-                pow(pow(1 + eps, Sp.get_Alpha()) - Sp.get_p() - 1, 1 / Sp.get_Alpha()))
+        return ((1 + eps) * R * pow(Sp.getBeta(), 1.0 / Sp.getAlpha()) /
+                pow(pow(1 + eps, Sp.getAlpha()) - Sp.get_p() - 1, 1 / Sp.getAlpha()))
                + r;
     }
 

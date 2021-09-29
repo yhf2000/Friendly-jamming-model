@@ -13,11 +13,12 @@ class SINR {
     double Alpha, Beta, P, N, R, p;
 public:
 
-    double get_Alpha() const { return Alpha; }
+    double getAlpha() const { return Alpha; }
 
-    double get_Beta() const { return Beta; }
+    double getBeta() const { return Beta; }
 
     double get_p() const { return p; }
+
 
     SINR(double R, double P = -1, double p = JammerThreshold, double Alpha = 3, double Beta = 1.5, double N = 1) :
             Alpha(Alpha), Beta(Beta), P(P), N(N), R(R), p(p) {
