@@ -3,6 +3,8 @@
 
 #include "BaseRound.h"
 #include "Const.h"
+#include "utils.h"
+#include "statistics.h"
 #include <random>
 #include <algorithm>
 
@@ -12,6 +14,7 @@ class GlobalBroadcast : public BaseCircle {
     vector<bool> bitmap;
     map<int, vector<int>> nxtRoundNodeID;
     int JammerID, BroadcastID, receiveNumber;
+    long long JammerRound;
 
     /**
      * 在一个小时间片内的广播
@@ -26,9 +29,6 @@ class GlobalBroadcast : public BaseCircle {
         vector<Node> SendNode;
         SINR sinrCalculate(R);
 
-        // 统计含有广播节点的数量
-//        int BlockNumber = 0;
-//        for (const auto &x:BlockNum) if (x.second != 0) BlockNumber++;
 
         // 初始化
         for (const auto &x:Sender) nodes[x].setState(Active);
@@ -71,10 +71,6 @@ class GlobalBroadcast : public BaseCircle {
             RunRound++;
         }
 
-        // 统计是否有块内的点全部失去
-//        for (const auto &x:BlockNum) if (x.second != 0) BlockNumber--;
-//        assert(BlockNumber == 0);
-
         for (const auto &x:Sender) {
             if (nodes[x].getState() == Active) {
                 leaderID.emplace_back(x);
@@ -90,7 +86,6 @@ class GlobalBroadcast : public BaseCircle {
         uniform_real_distribution<double> randomGen(0, 1);
 
         if (nxtRoundNodeID.count(gridID)) {
-
             // 统计出当前回合会进行发信的点
             vector<int> WorkNode;
             map<int, int> BlockNum;
@@ -107,7 +102,8 @@ class GlobalBroadcast : public BaseCircle {
             // 选出实际进行传信的节点
             vector<Node> Sender;
             // Jammer 始终发送信号
-            Sender.emplace_back(nodes[JammerID]);
+            if (JammerID != -1)
+                Sender.emplace_back(nodes[JammerID]);
 
             for (const auto &x:rt) {
                 if (randomGen(rand_eng) <= p_broadCast * p_global)
@@ -119,13 +115,13 @@ class GlobalBroadcast : public BaseCircle {
             for (int i = 0; i < n; i++) {
                 if (!bitmap[i]) {
                     int rcvID = sinrCalculate.Listen(nodes[i], Sender);
-                    if (rcvID != -1 && rcvID != 0) {
+                    if (rcvID != -1 && (JammerID == -1 || rcvID != 0)) {
                         bitmap[i] = true;
-                        receiveNumber ++;
+                        receiveNumber++;
                     }
                 }
             }
-            RunRound ++;
+            RunRound++;
         }
     }
 
@@ -134,13 +130,15 @@ public:
      * @param BroadcastID 初始广播者 ID
      * @return 时间复杂度
      */
-    int run() {
+    long long run() {
         // 1  p工作(运行算法)  1-p静默
         // 这个部分直接加到了 领导人选举和传播里面
 
+        // 初始化 bitmap
         bitmap.clear();
         bitmap.resize(n, false);
-        for(int i = 0; i < n; i ++) bitmap[i] = false;
+        for (int i = 0; i < n; i++) bitmap[i] = false;
+
         bitmap[BroadcastID] = true;
         receiveNumber = 1;
 
@@ -149,77 +147,120 @@ public:
         while (true) {
 
             // 若没有新增的收到消息的点，记录
-            if(lstReceiveNumber == receiveNumber){
-                zeroRound ++;
-            }else{
+            if (lstReceiveNumber == receiveNumber) {
+                zeroRound++;
+            } else {
                 lstReceiveNumber = receiveNumber;
                 zeroRound = 0;
             }
 
             // 若连续两次都没有节点收到新的点 且 超过 n/10 的点已经收到了消息  退出
-            if(zeroRound >= 3 && receiveNumber > n / 10){
+            if (zeroRound >= 3 && receiveNumber > n / 10) {
                 break;
             }
 
             nxtRoundNodeID.clear();
             // 2  统计已收到信号的单元
-            for(int i = 0; i < n; i ++){
-                if(bitmap[i] && i != JammerID)
+            for (int i = 0; i < n; i++) {
+                if (bitmap[i] && i != JammerID)
                     nxtRoundNodeID[nodes[i].getGridId()].emplace_back(i);
             }
 
             long long max_Round = 0;
-            for(int i = 0; i < 99; i ++){
+            for (int i = 0; i < 99; i++) {
                 RunRound = 0;
                 broadcast(i);
                 max_Round += max(max_Round, RunRound);
             }
 
-            TotRound += max_Round;
+            TotRound += max_Round * 100;
 //            cerr << receiveNumber << endl;
         }
-        return TotRound;
+        return TotRound + JammerRound;
     }
 
 public:
 
     /**
      *
-     * @param communicationRadius
-     * @param fieldRadius
-     * @param n
-     * @param gridLength
-     * @param p_leaderElection 领导人选举时的静默概率
-     * @param p_broadCase
-     * @param p_global
-     * @param r
+     * @param communicationRadius 通信半径
+     * @param fieldRadius 场地半径
+     * @param n 节点数
+     * @param grid_eps grid = grid_eps * R / sqrt(2)
+     * @param p_leaderElection 领导人选举静默概率
+     * @param p_broadCase 广播静默概率
+     * @param p_global 全局静默概率
+     * @param r jammer election 选择半径
      */
     GlobalBroadcast(int communicationRadius,
                     int fieldRadius,
+                    int r,
                     int n,
-                    int gridLength,
+                    double grid_eps,
                     double p_leaderElection,
                     double p_broadCase,
                     double p_global,
-                    int r) :
-            BaseCircle(communicationRadius, fieldRadius, n, gridLength),
+                    bool need_Eavesdropper = true) :
+            BaseCircle(communicationRadius,
+                       fieldRadius, n,
+                       ceil(grid_eps * communicationRadius / sqrt(2))),
             p_leaderElection(p_leaderElection),
             p_broadCast(p_broadCase),
-            p_global(p_global){
+            p_global(p_global) {
 
-        // 多生成一个点作为窃听者
-        generateNodeWithUniform(true);
-        BroadcastID = 0;
+        if (need_Eavesdropper) {
+            // 多生成一个点作为窃听者
+            generateNodeWithUniform(true, 1);
+            BroadcastID = 0;
 
-        // 获取窃听者
-        auto Eavesdropper = nodes.back();
-        nodes.pop_back();
+            // 获取窃听者
+            auto Eavesdropper = nodes.back();
+            nodes.pop_back();
 
-        // 选择阻塞点的位置
-        JammerID = selectJammerIndex(r, p_leaderElection, Eavesdropper);
-//        cerr << "JJJ " << JammerID << endl;
+            // 选择阻塞点的位置
+            RunRound = 0;
+            JammerID = selectJammerIndex(r, p_leaderElection, Eavesdropper);
+            JammerRound = RunRound;
+//        cerr << "Jammer " << JammerID << endl;
+        } else {
+            generateNodeWithUniform(true);
+            BroadcastID = 0;
+            JammerID = -1;
+            JammerRound = 0;
+        }
+
     }
 
+};
+
+class GlobalBroadcastTime {
+public:
+    GlobalBroadcastTime(int communicationRadius,
+                        int fieldRadius,
+                        int r,
+                        double grid_eps,
+                        double p_leaderElection,
+                        double p_broadCase,
+                        const string &output_name,
+                        Range<> n_Range,
+                        Range<double> global_p_Range,
+                        int repNum) {
+        ofstream out(output_name);
+
+        statistics withJammer("withJammer"), withoutJammer("withoutJammer");
+        out << "{";
+        R_for(n, n_Range){
+            cerr << " n " << n << endl;
+            R_for_d(golbal_p, global_p_Range){
+                cerr << " p " << golbal_p << endl;
+
+                int rep = repNum;
+
+
+            }
+        }
+
+    }
 };
 
 #endif //INC_210825_GLOBALBROADCAST_H

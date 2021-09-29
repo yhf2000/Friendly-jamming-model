@@ -50,6 +50,8 @@ class LocalBroadcast : public BaseCircle {
         return {ReceiveNumInSafeZone, ThreeZoneNum, SafeZoneNum, CommunicationRadiusNumber, ReceiveNumInR};
     }
 
+
+
 public:
     LocalBroadcast(int CommunicationRadius, int FieldRadius, int n) : BaseCircle(CommunicationRadius, FieldRadius, n) {
         generateNodeWithUniform();
@@ -64,6 +66,7 @@ public:
         if (JammerIndex == -1) return {-1, -1, -1, -1, -1, -1, -1, -1};
 
         uniform_int_distribution<int> randomGen(0, n - 1);
+        SINR sinr(R);
         // Broadcast 距离 Jammer 的距离，接受数
         vector<pair<double, tuple<int, int, int, int, int>>> R_data(repeat);
 
@@ -81,7 +84,8 @@ public:
             for (int i = 0; i < len; i++) {
                 int BroadcastIndex = randomGen(rand_eng);
                 while (BroadcastIndex == JammerIndex
-                       || nodes[BroadcastIndex].get_disFromOri() > R)
+                       || nodes[BroadcastIndex].get_disFromOri() > R
+                       || nodes[BroadcastIndex].get_disFromOri() < sinr.getMinBroadcasterDis(r))
                     BroadcastIndex = randomGen(rand_eng);
                 t_set[i] = new thread(fn, right + i, BroadcastIndex);
             }
@@ -167,20 +171,19 @@ public:
      * @param R 通信半径
      * @param p 通信概率
      */
-    LocalBroadcastStaticTime(int R, double p, const string &output_name) {
+    LocalBroadcastStaticTime(int R, double p, const string &output_name, Range<> n_Range, Range<> r_Range, int repNum) {
         ofstream out(output_name);
 
         // 时间复杂度，当前部分与 Broadcast，Jammer 之间的距离无关
         statistics localTime("Time");
         out << "{";
 
-        for (int n = 5000; n <= 10000; n += 500) {
+        R_for (n, n_Range) {
             cerr << " n " << n << endl;
-            for (int r = 10; r <= 30; r += 4) {
+            R_for (r, r_Range) {
                 cerr << " r " << r << endl;
 
-
-                int rep = 5000;
+                int rep = repNum;
                 multi.clear();
                 multi.resize(rep);
 
@@ -194,9 +197,8 @@ public:
                     for (int i = 0; i < len; i++) {
                         t_set[i]->join();
                     }
-//                    cerr << rep << endl;
                 }
-                for (int i = 0; i < 5000; i++) {
+                for (int i = 0; i < repNum; i++) {
                     auto rt = multi[i];
                     if (get<0>(rt) != -1) {
                         localTime.add(r, get<1>(rt));
@@ -208,7 +210,7 @@ public:
             localTime.print(out);
             localTime.clear();
             out << "]";
-            if (n != 10000) out << ",\n";
+            if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
 
         }
         out << "}";
@@ -226,7 +228,11 @@ class LocalBroadcastStaticData {
     }
 
 public:
-    LocalBroadcastStaticData(int R, double p, const string &output_name, Range n_Range, Range r_Range, int repNum) {
+    /**
+     * @param R 通信半径
+     * @param p 通信概率
+     */
+    LocalBroadcastStaticData(int R, double p, const string &output_name, Range<> n_Range, Range<> r_Range, int repNum) {
         ofstream out(output_name);
 
         statisticsHalf cover("Cover"), success("Success"), receive("Receive");
@@ -250,7 +256,6 @@ public:
                     for (int i = 0; i < len; i++) {
                         t_set[i]->join();
                     }
-//                    cerr << rep << endl;
                 }
                 for (int i = 0; i < repNum; i++) {
                     auto rt = multi2[i];
@@ -267,11 +272,9 @@ public:
 
             }
             out << "\"" << n << "\":[\n";
-
             cover.print(out), out << ",\n";
             success.print(out), out << ",\n";
             receive.print(out);
-
             out << "]";
             if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
 

@@ -68,6 +68,12 @@ public:
         if (num == 1) return pos;
         else return -1;
     }
+
+    double getMinBroadcasterDis(int r) const {
+        return (1 + eps) * R * r /
+               pow(Beta * pow((1 + eps) * R, Alpha) + pow(r, Alpha), 1 / Alpha);
+    }
+
 };
 
 #endif //INC_210825_SINR_H

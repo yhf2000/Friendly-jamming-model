@@ -6,4 +6,4 @@ set(CMAKE_CXX_FLAGS
         -pthread
         )
 
-add_executable(simulation main.cpp node.h SINR.h Const.h statistics.h LocalBroadcast.h BaseRound.h GlobalBroadcast.h utils.h)
+add_executable(simulation main.cpp node.h SINR.h Const.h statistics.h LocalBroadcast.h BaseRound.h GlobalBroadcast.h utils.h ThreadPool.h)

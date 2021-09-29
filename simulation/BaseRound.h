@@ -12,8 +12,10 @@ protected:
     double R;
     // 节点向量
     vector<Node> nodes;
-    // 当前轮数
-    long long RunRound, BlockSize;
+    // 轮数统计
+    long long RunRound;
+
+    int BlockSize;
 
     // 获取所在的位置
     int getGrid(const Node &node) const {
@@ -79,7 +81,7 @@ public:
         BlockSize = BlockSize * BlockSize;
     }
 
-    void generateNodeWithUniform(bool global = false) {
+    void generateNodeWithUniform(bool global = false, int moreNode=0) {
         // 生成时判断是否在圆内
         unordered_set<Node, NodeHash, NodeEqu> exist;
 
@@ -88,7 +90,7 @@ public:
 
 
 
-        while(nodes.size() != n + global){
+        while(nodes.size() != n + moreNode){
             // 清空原有节点向量
             nodes.clear();
 
@@ -100,7 +102,7 @@ public:
             // 随机生成点
             int failed = 0;
             // 连续 100 次重复，说明过于稠密
-            while (nodes.size() < n + global && failed < 200) {
+            while (nodes.size() < n + moreNode && failed < 200) {
                 Node newNode(randomGen(rand_eng), randomGen(rand_eng));
                 // 判断是否在圆内，判断是否在曾经存在
                 if (isInCircle(newNode) && !exist.count(newNode) && newNode.getX() != 0 && newNode.getY() != 0) {
@@ -114,7 +116,7 @@ public:
 
         // 检查是否成功生成 n 个点
         // 断言失败说明 n 对于当前的 CircleR 过大
-        assert(nodes.size() == n + global);
+        assert(nodes.size() == n + moreNode);
 //        nodes.resize(n);
     }
 
@@ -127,7 +129,7 @@ public:
         // 定义随机数生成器
         uniform_real_distribution<double> randomGen(0, 1);
         // 定义 SINR 计算类
-        SINR sinrCalculate(R);
+//        SINR sinrCalculate(R);
 
         // 算法运行中剩余的点
         int nodeLeft = 0;
@@ -198,7 +200,7 @@ public:
 //        return 0;
     }
 
-    int getRound() const { return RunRound; }
+//    int getRound() const { return RunRound; }
 };
 
 #endif //INC_210825_BASEROUND_H

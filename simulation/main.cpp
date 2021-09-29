@@ -14,8 +14,8 @@ int main() {
 //    LocalBroadcastStaticTime(R, p, "Time.json");
     LocalBroadcastStaticData(R, p,
                              "local_statistics.json",
-                             Range(1000, 10000, 500),
-                             Range(3, 10, 1),
+                             Range<>(5000, 10000, 500),
+                             Range<>(3, 10, 1),
                              10
                              );
 //    auto v = GlobalBroadcast(80, 500, 100000, 15, 0.02, 0.04, 0.4, 30);

@@ -2,25 +2,27 @@
 #define SIMULATION_UTILS_H
 
 #define R_for(i, R) for(int i = R.getMin(); i <= R.getMax(); i += R.getStep())
+#define R_for_d(i, R) for(double i = R.getMin(); i <= R.getMax(); i += R.getStep())
 
+template <class T=int>
 class Range {
-    int Min, Max, Step;
+    T Min, Max, Step;
 
 public:
-    int getMin() const {
+    T getMin() const {
         return Min;
     }
 
-    int getMax() const {
+    T getMax() const {
         return Max;
     }
 
-    int getStep() const {
+    T getStep() const {
         return Step;
     }
 
 
-    Range(int Min, int Max, int Step) :
+    Range(T Min, T Max, T Step) :
             Min(Min), Max(Max), Step(Step) {}
 };
 
