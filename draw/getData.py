@@ -40,7 +40,7 @@ def read_data(name):
 
 
 def read_data_2(name, r=10):
-    data: dict = json.loads(open("Time.json").read())
+    data: dict = json.loads(open("GlobalTime.json").read())
 
     X = []
     Y = []
