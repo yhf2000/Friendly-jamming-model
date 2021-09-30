@@ -8,6 +8,8 @@
 #include <random>
 #include <algorithm>
 
+using namespace std;
+
 class GlobalBroadcast : public BaseCircle {
 
     double p_leaderElection, p_broadCast, p_global;
@@ -170,11 +172,12 @@ public:
             for (int i = 0; i < 99; i++) {
                 RunRound = 0;
                 broadcast(i);
-                max_Round += max(max_Round, RunRound);
+                max_Round = max(max_Round, RunRound);
             }
 
             TotRound += max_Round * 100;
-//            cerr << receiveNumber << endl;
+//            cerr << "TotRound  -> " << TotRound << endl;
+            cerr << receiveNumber << endl;
         }
         return TotRound + JammerRound;
     }
@@ -196,14 +199,13 @@ public:
                     int fieldRadius,
                     int r,
                     int n,
-                    double grid_eps,
                     double p_leaderElection,
                     double p_broadCase,
                     double p_global,
                     bool need_Eavesdropper = true) :
             BaseCircle(communicationRadius,
                        fieldRadius, n,
-                       ceil(grid_eps * communicationRadius / sqrt(2))),
+                       ceil(eps * communicationRadius / sqrt(2))),
             p_leaderElection(p_leaderElection),
             p_broadCast(p_broadCase),
             p_global(p_global) {
@@ -221,7 +223,7 @@ public:
             RunRound = 0;
             JammerID = selectJammerIndex(r, p_leaderElection, Eavesdropper);
             JammerRound = RunRound;
-//        cerr << "Jammer " << JammerID << endl;
+            cerr << "Jammer " << JammerID << endl;
         } else {
             generateNodeWithUniform(true);
             BroadcastID = 0;
@@ -249,9 +251,9 @@ public:
 
         statistics withJammer("withJammer"), withoutJammer("withoutJammer");
         out << "{";
-        R_for(n, n_Range){
+        R_for(n, n_Range) {
             cerr << " n " << n << endl;
-            R_for_d(golbal_p, global_p_Range){
+            R_for_d(golbal_p, global_p_Range) {
                 cerr << " p " << golbal_p << endl;
 
                 int rep = repNum;

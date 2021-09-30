@@ -70,7 +70,7 @@ public:
         else return -1;
     }
 
-    double getMinBroadcasterDis(int r) const {
+    double getMinBroadcasterDis(double r) const {
         return (1 + eps) * R * r /
                pow(Beta * pow((1 + eps) * R, Alpha) + pow(r, Alpha), 1 / Alpha);
     }

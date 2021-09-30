@@ -85,7 +85,7 @@ public:
                 int BroadcastIndex = randomGen(rand_eng);
                 while (BroadcastIndex == JammerIndex
                        || nodes[BroadcastIndex].get_disFromOri() > R
-                       || nodes[BroadcastIndex].get_disFromOri() < sinr.getMinBroadcasterDis(r))
+                       || nodes[BroadcastIndex].get_disFromOri() < sinr.getMinBroadcasterDis(nodes[JammerIndex].get_disFromOri()))
                     BroadcastIndex = randomGen(rand_eng);
                 t_set[i] = new thread(fn, right + i, BroadcastIndex);
             }

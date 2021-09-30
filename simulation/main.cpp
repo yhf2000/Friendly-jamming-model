@@ -12,12 +12,18 @@ int main() {
 
     //// Local Broadcast
 //    LocalBroadcastStaticTime(R, p, "Time.json");
-    LocalBroadcastStaticData(R, p,
-                             "local_statistics.json",
-                             Range<>(5000, 10000, 500),
-                             Range<>(3, 10, 1),
-                             10
-                             );
-//    auto v = GlobalBroadcast(80, 500, 100000, 15, 0.02, 0.04, 0.4, 30);
-//    cout << v.run() << endl;
+//    LocalBroadcastStaticData(R, p,
+//                             "local_statistics.json",
+//                             Range<>(5000, 10000, 500),
+//                             Range<>(3, 10, 1),
+//                             10
+//                             );
+    auto v = GlobalBroadcast(50,
+                             300,
+                             10,
+                             10000,
+                             0.6,
+                             0.6,
+                             0.4);
+    cout << v.run() << endl;
 }
