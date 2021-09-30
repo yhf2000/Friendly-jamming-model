@@ -35,5 +35,5 @@ int main() {
                         "GlobalTime.json",
                         Range<>(5000, 10000, 500),
                         Range<double>(0.2, 0.8, 0.1),
-                        200);
+                        1000);
 }
