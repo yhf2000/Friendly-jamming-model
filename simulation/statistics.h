@@ -1,10 +1,10 @@
 #ifndef INC_210825_STATISTICS_H
 #define INC_210825_STATISTICS_H
-
+template<class Key, class Value>
 class statistics {
     string name;
-    map<int, double> val;
-    map<int, int> num;
+    map<Key, Value> val;
+    map<Key, int> num;
 
 public:
     statistics(const string &name) : name(name) {}
@@ -17,7 +17,7 @@ public:
     }
 
     // 增加一个统计元素
-    void add(int r, double v) {
+    void add(Key r, Value v) {
         val[r] += v, num[r] += 1;
     }
 
@@ -36,18 +36,22 @@ public:
     }
 };
 
-class statisticsHalf {
+template<class Key, class Value>
+class statisticsPair {
     string name;
-    statistics less, great;
+    statistics<Key, Value> less, great;
 
 
 public:
-    statisticsHalf(const string &str) : name(str), less(name + " Less"), great(name + " Great") {}
+    statisticsPair(const string &str,
+                   string First = "Less",
+                   string Second = "Great")
+            : name(str), less(name + " " + First), great(name + " " + Second) {}
 
     /**
-     * @param type  0 Less  1 Great
+     * @param type  0 First  1 Second
      */
-    void add(int type, int r, double val) {
+    void add(int type, Key r, Value val) {
         if (type == 0) less.add(r, val);
         else if (type == 1) great.add(r, val);
     }

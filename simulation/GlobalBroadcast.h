@@ -177,7 +177,7 @@ public:
 
             TotRound += max_Round * 100;
 //            cerr << "TotRound  -> " << TotRound << endl;
-            cerr << receiveNumber << endl;
+//            cerr << receiveNumber << endl;
         }
         return TotRound + JammerRound;
     }
@@ -223,7 +223,7 @@ public:
             RunRound = 0;
             JammerID = selectJammerIndex(r, p_leaderElection, Eavesdropper);
             JammerRound = RunRound;
-            cerr << "Jammer " << JammerID << endl;
+//            cerr << "Jammer " << JammerID << endl;
         } else {
             generateNodeWithUniform(true);
             BroadcastID = 0;
@@ -248,18 +248,38 @@ public:
                         int repNum) {
         ofstream out(output_name);
 
-        statistics withJammer("withJammer"), withoutJammer("withoutJammer");
+        statisticsPair<double, double> stat("Global", "withJammer", "withoutJammer");
         out << "{";
         R_for(n, n_Range) {
             cerr << " n " << n << endl;
-            R_for_d(golbal_p, global_p_Range) {
-                cerr << " p " << golbal_p << endl;
-
-                int rep = repNum;
-
-
+            R_for_d(p_global, global_p_Range) {
+                cerr << " p " << p_global << endl;
+                ThreadPool pool(maxThread);
+                vector<future<long long>> res;
+                for (int rep = 0; rep < repNum; rep++) {
+                    res.emplace_back(pool.enqueue([&] {
+                        GlobalBroadcast bg(communicationRadius,
+                                           fieldRadius,
+                                           r, n,
+                                           p_leaderElection,
+                                           p_broadCase,
+                                           p_global,
+                                           rep < repNum / 2);
+                        return bg.run();
+                    }));
+                }
+                for (int i = 0; i < res.size(); i++) {
+                    auto rt = res[i].get();
+                    stat.add(i >= repNum / 2, p_global, rt);
+                }
             }
+            out << "\"" << n << "\":[\n";
+            stat.print(out);
+            out << "]";
+            if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
+            stat.clear();
         }
+        out << "}";
 
     }
 };

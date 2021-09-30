@@ -11,14 +11,14 @@ int main() {
     double p = 0.6;
 
     //// Local Broadcast
-    cout << maxThread <<endl;
+    cout << maxThread << endl;
 //    LocalBroadcastStaticTime(R, p, "Time.json");
-    LocalBroadcastStaticData(R, p,
-                             "local_statistics.json",
-                             Range<>(5000, 10000, 500),
-                             Range<>(3, 10, 1),
-                             200
-                             );
+//    LocalBroadcastStaticData(R, p,
+//                             "local_statistics.json",
+//                             Range<>(5000, 10000, 500),
+//                             Range<>(3, 10, 1),
+//                             200
+//                             );
 //    auto v = GlobalBroadcast(50,
 //                             300,
 //                             10,
@@ -27,4 +27,13 @@ int main() {
 //                             0.6,
 //                             0.4);
 //    cout << v.run() << endl;
+    GlobalBroadcastTime(50,
+                        300,
+                        10,
+                        0.6,
+                        0.6,
+                        "GlobalTime.json",
+                        Range<>(5000, 10000, 500),
+                        Range<double>(0.2, 0.8, 0.1),
+                        200);
 }

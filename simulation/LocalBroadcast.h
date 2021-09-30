@@ -172,7 +172,7 @@ public:
         ofstream out(output_name);
 
         // 时间复杂度，当前部分与 Broadcast，Jammer 之间的距离无关
-        statistics localTime("Time");
+        statistics<int, double> localTime("Time");
         ThreadPool pool(maxThread);
 
         out << "{";
@@ -226,7 +226,7 @@ public:
                              int repNum) {
         ofstream out(output_name);
 
-        statisticsHalf cover("Cover"), success("Success"), receive("Receive");
+        statisticsPair <int, double> cover("Cover"), success("Success"), receive("Receive");
         out << "{";
         R_for (n, n_Range) {
             cerr << " n " << n << endl;
