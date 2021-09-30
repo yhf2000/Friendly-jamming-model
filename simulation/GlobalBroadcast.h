@@ -240,7 +240,6 @@ public:
     GlobalBroadcastTime(int communicationRadius,
                         int fieldRadius,
                         int r,
-                        double grid_eps,
                         double p_leaderElection,
                         double p_broadCase,
                         const string &output_name,

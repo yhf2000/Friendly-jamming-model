@@ -5,6 +5,8 @@
 #include "BaseRound.h"
 #include "statistics.h"
 #include "utils.h"
+#include "ThreadPool.h"
+#include "Const.h"
 
 class LocalBroadcast : public BaseCircle {
 
@@ -51,7 +53,6 @@ class LocalBroadcast : public BaseCircle {
     }
 
 
-
 public:
     LocalBroadcast(int CommunicationRadius, int FieldRadius, int n) : BaseCircle(CommunicationRadius, FieldRadius, n) {
         generateNodeWithUniform();
@@ -68,37 +69,38 @@ public:
         uniform_int_distribution<int> randomGen(0, n - 1);
         SINR sinr(R);
         // Broadcast 距离 Jammer 的距离，接受数
-        vector<pair<double, tuple<int, int, int, int, int>>> R_data(repeat);
-
-        // 重复计算
-
-        int right = 0;
-
-        while (repeat > 0) {
-            int len = min(repeat, maxThread);
-
-            auto fn = [&](int pos, int BroadcastIndex) {
-                R_data[pos] = {nodes[BroadcastIndex].get_disFromOri(), run(JammerIndex, BroadcastIndex)};
-            };
-            vector<thread *> t_set(len);
-            for (int i = 0; i < len; i++) {
-                int BroadcastIndex = randomGen(rand_eng);
-                while (BroadcastIndex == JammerIndex
-                       || nodes[BroadcastIndex].get_disFromOri() > R
-                       || nodes[BroadcastIndex].get_disFromOri() < sinr.getMinBroadcasterDis(nodes[JammerIndex].get_disFromOri()))
-                    BroadcastIndex = randomGen(rand_eng);
-                t_set[i] = new thread(fn, right + i, BroadcastIndex);
-            }
-            for (int i = 0; i < len; i++) {
-                t_set[i]->join();
-            }
-            right = right + len, repeat -= len;
+        // 并行
+//        vector<future<pair<double, tuple<int, int, int, int, int>>>> res;
+//        ThreadPool pool(maxThread);
+//        for(int rep = 0; rep < repeat; rep ++){
+//            res.emplace_back(pool.enqueue([&]{
+//                int BroadcastIndex = randomGen(rand_eng);
+//                while (BroadcastIndex == JammerIndex
+//                       || nodes[BroadcastIndex].get_disFromOri() > R
+//                       || nodes[BroadcastIndex].get_disFromOri() <
+//                          sinr.getMinBroadcasterDis(nodes[JammerIndex].get_disFromOri()))
+//                    BroadcastIndex = randomGen(rand_eng);
+//                return make_pair(nodes[BroadcastIndex].get_disFromOri(), run(JammerIndex, BroadcastIndex));
+//            }));
+//        }
+        // 串行
+        vector<pair<double, tuple<int, int, int, int, int>>> res;
+        for (int rep = 0; rep < repeat; rep++) {
+            int BroadcastIndex = randomGen(rand_eng);
+            while (BroadcastIndex == JammerIndex
+                   || nodes[BroadcastIndex].get_disFromOri() > R
+                   || nodes[BroadcastIndex].get_disFromOri() <
+                      sinr.getMinBroadcasterDis(nodes[JammerIndex].get_disFromOri()))
+                BroadcastIndex = randomGen(rand_eng);
+            res.emplace_back(make_pair(nodes[BroadcastIndex].get_disFromOri(), run(JammerIndex, BroadcastIndex)));
         }
-
 
         // 计算 r1
         double r1 = R, hf;
-        for (const auto &x: R_data) if (get<0>(x.second) != 0) r1 = min(r1, x.first);
+        for (auto &&re: res) {
+            auto x = re;
+            if (get<0>(x.second) != 0) r1 = min(r1, x.first);
+        }
         hf = (r1 + R) / 2;
 
 
@@ -114,7 +116,8 @@ public:
 
         // 0,                      1,                   2                  3               4
         // SafeZone 中收到消息的数量，Three Zone 中的节点数，SafeZone 中的节点数，在 R 内的节点数量, R 内能收到消息的节点数量
-        for (const auto &x: R_data) {
+        for (auto &re: res) {
+            auto x = re;
             if (r1 <= x.first && x.first <= hf) {
                 if (get<0>(x.second) != 0) {
                     ReceiveNumSum_a_cg += 1.0 * get<0>(x.second) / get<2>(x.second);
@@ -157,14 +160,8 @@ public:
 
 };
 
-vector<tuple<int, int>> multi;
 
 class LocalBroadcastStaticTime {
-
-    static void run(int R, double p, int n, int r, int i) {
-        LocalBroadcast d(R, R * 2, n);
-        multi[i] = d.runWith_r_one(r, p);
-    }
 
 public:
     /**
@@ -176,35 +173,29 @@ public:
 
         // 时间复杂度，当前部分与 Broadcast，Jammer 之间的距离无关
         statistics localTime("Time");
+        ThreadPool pool(maxThread);
+
         out << "{";
 
         R_for (n, n_Range) {
             cerr << " n " << n << endl;
             R_for (r, r_Range) {
                 cerr << " r " << r << endl;
-
-                int rep = repNum;
-                multi.clear();
-                multi.resize(rep);
-
-                while (rep > 0) {
-                    int len = min(rep, maxThread);
-                    rep -= len;
-                    vector<thread *> t_set(len);
-                    for (int i = 0; i < len; i++) {
-                        t_set[i] = new thread(run, R, p, n, r, rep + i);
-                    }
-                    for (int i = 0; i < len; i++) {
-                        t_set[i]->join();
-                    }
+                vector<future<tuple<int, int>>> res;
+                for (int rep = 0; rep < repNum; rep++) {
+                    res.emplace_back(pool.enqueue(
+                            [&] {
+                                LocalBroadcast d(R, R * 2, n);
+                                return d.runWith_r_one(r, p);
+                            }
+                    ));
                 }
-                for (int i = 0; i < repNum; i++) {
-                    auto rt = multi[i];
+                for (auto &&re : res) {
+                    auto rt = re.get();
                     if (get<0>(rt) != -1) {
                         localTime.add(r, get<1>(rt));
                     }
                 }
-
             }
             out << "\"" << n << "\":[\n";
             localTime.print(out);
@@ -213,18 +204,17 @@ public:
             if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
 
         }
+
         out << "}";
     }
+
 };
 
-
-vector<tuple<int, int, double, double, double, double, double, double>> multi2;
 
 class LocalBroadcastStaticData {
 
     static void run(int R, double p, int n, int r, int i) {
-        LocalBroadcast d(R, R * 2, n);
-        multi2[i] = d.runWith_r(r, p, 100);
+
     }
 
 public:
@@ -232,7 +222,8 @@ public:
      * @param R 通信半径
      * @param p 通信概率
      */
-    LocalBroadcastStaticData(int R, double p, const string &output_name, Range<> n_Range, Range<> r_Range, int repNum) {
+    LocalBroadcastStaticData(int R, double p, const string &output_name, Range<> n_Range, Range<> r_Range,
+                             int repNum) {
         ofstream out(output_name);
 
         statisticsHalf cover("Cover"), success("Success"), receive("Receive");
@@ -242,23 +233,18 @@ public:
             R_for(r, r_Range) {
                 cerr << " r " << r << endl;
 
-                int rep = repNum;
-                multi2.clear();
-                multi2.resize(rep);
+                vector<future<tuple<int, int, double, double, double, double, double, double>>> res;
+                ThreadPool pool(maxThread);
 
-                while (rep > 0) {
-                    int len = min(rep, maxThread / 4);
-                    rep -= len;
-                    vector<thread *> t_set(len);
-                    for (int i = 0; i < len; i++) {
-                        t_set[i] = new thread(run, R, p, n, r, rep + i);
-                    }
-                    for (int i = 0; i < len; i++) {
-                        t_set[i]->join();
-                    }
+                for (int rep = 0; rep < repNum; rep++) {
+                    res.emplace_back(pool.enqueue([&] {
+                        LocalBroadcast d(R, R * 2, n);
+                        return d.runWith_r(r, p, 100);
+                    }));
                 }
-                for (int i = 0; i < repNum; i++) {
-                    auto rt = multi2[i];
+
+                for (auto &&rs:res) {
+                    auto rt = rs.get();
                     if (get<0>(rt) != -1) {
                         int rn = r;
                         cover.add(0, rn, get<2>(rt));
