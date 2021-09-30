@@ -157,7 +157,7 @@ public:
             }
 
             // 若连续两次都没有节点收到新的点 且 超过 n/10 的点已经收到了消息  退出
-            if (zeroRound >= 3 && receiveNumber > n / 10) {
+            if (zeroRound >= 3 && receiveNumber > 10) {
                 break;
             }
 
