@@ -156,7 +156,7 @@ public:
                 zeroRound = 0;
             }
 
-            // 若连续两次都没有节点收到新的点 且 超过 n/10 的点已经收到了消息  退出
+            // 若连续两次都没有节点收到新的点 且 超过 10 的点已经收到了消息  退出
             if (zeroRound >= 3 && receiveNumber > 10) {
                 break;
             }
@@ -263,7 +263,7 @@ public:
                                            r, n,
                                            p_leaderElection,
                                            p_broadCase,
-                                           p_global,
+                                           rep < repNum / 2 ? p_global : 1,
                                            rep < repNum / 2);
                         return bg.run();
                     }));
