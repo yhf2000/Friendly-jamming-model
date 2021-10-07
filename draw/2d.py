@@ -17,6 +17,6 @@ for i in i_list:
     plt.plot(X, Y, label='gb_p=' + str(i) + " without", linestyle=':')
 
 
-plt.ylim(20000, 35000)
+plt.ylim(8000, 20000)
 plt.legend(bbox_to_anchor=(1, 0.5))
 plt.show()

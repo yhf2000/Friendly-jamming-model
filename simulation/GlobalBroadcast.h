@@ -15,8 +15,10 @@ class GlobalBroadcast : public BaseCircle {
     double p_leaderElection, p_broadCast, p_global;
     vector<bool> bitmap;
     map<int, vector<int>> nxtRoundNodeID;
+    set<pair<int, int>> finish; // gridID, BlockID
     int JammerID, BroadcastID, receiveNumber;
     long long JammerRound;
+    Node Eavesdropper;
 
     /**
      * 在一个小时间片内的广播
@@ -57,7 +59,7 @@ class GlobalBroadcast : public BaseCircle {
             // 判断是否收到消息，且改变对应的状态
             for (const auto &x: Sender) {
                 if (nodes[x].getState() == Receive) {
-                    if (sendNum && sinrCalculate.canGetSignal(nodes[x], SendNode))
+                    if (sendNum && sinrCalculate.Listen(nodes[x], SendNode) != -1)
                         nodes[x].setState(Inactive), BlockNum[nodes[x].getBlockId()] -= 1;
                 }
             }
@@ -108,8 +110,11 @@ class GlobalBroadcast : public BaseCircle {
                 Sender.emplace_back(nodes[JammerID]);
 
             for (const auto &x:rt) {
-                if (randomGen(rand_eng) <= p_broadCast * p_global)
+                if (randomGen(rand_eng) <= p_global){
                     Sender.emplace_back(nodes[x]);
+                    finish.emplace(nodes[x].getGridId(), nodes[x].getBlockId());
+
+                }
             }
 
 
@@ -132,7 +137,7 @@ public:
      * @param BroadcastID 初始广播者 ID
      * @return 时间复杂度
      */
-    long long run() {
+    long long run(double r) {
         // 1  p工作(运行算法)  1-p静默
         // 这个部分直接加到了 领导人选举和传播里面
 
@@ -140,32 +145,34 @@ public:
         bitmap.clear();
         bitmap.resize(n, false);
         for (int i = 0; i < n; i++) bitmap[i] = false;
+        receiveNumber = 0;
+
+        // 把 safe zone 以内的点标记
+        SINR sinr(R);
+        double safeZoneR = get_SafeZoneR(sinr, r);
+        if(JammerID != -1){
+            for (int i = 0; i < n; i++) {
+                if ((nodes[JammerID] - nodes[i]).get_disFromOri() <= safeZoneR) {
+                    bitmap[i] = true;
+                    receiveNumber += 1;
+                }
+            }
+        }
 
         bitmap[BroadcastID] = true;
-        receiveNumber = 1;
+        receiveNumber += 1;
 
-        long long TotRound = 0, lstReceiveNumber = receiveNumber, zeroRound = 0;
+        long long TotRound = 0;
 
-        while (true) {
-
-            // 若没有新增的收到消息的点，记录
-            if (lstReceiveNumber == receiveNumber) {
-                zeroRound++;
-            } else {
-                lstReceiveNumber = receiveNumber;
-                zeroRound = 0;
-            }
-
-            // 若连续两次都没有节点收到新的点 且 超过 10 的点已经收到了消息  退出
-            if (zeroRound >= 3 && receiveNumber > 10) {
-                break;
-            }
-
+        while (receiveNumber < n) {
             nxtRoundNodeID.clear();
             // 2  统计已收到信号的单元
             for (int i = 0; i < n; i++) {
-                if (bitmap[i] && i != JammerID)
+                if (bitmap[i]
+                    && i != JammerID
+                    && !finish.count({nodes[i].getGridId(), nodes[i].getBlockId()})){
                     nxtRoundNodeID[nodes[i].getGridId()].emplace_back(i);
+                }
             }
 
             long long max_Round = 0;
@@ -176,8 +183,8 @@ public:
             }
 
             TotRound += max_Round * 100;
-//            cerr << "TotRound  -> " << TotRound << endl;
-//            cerr << receiveNumber << endl;
+            cerr << "TotRound  -> " << TotRound << endl;
+            cerr << receiveNumber << endl;
         }
         return TotRound + JammerRound;
     }
@@ -210,13 +217,15 @@ public:
             p_broadCast(p_broadCase),
             p_global(p_global) {
 
+        finish.clear();
+
         if (need_Eavesdropper) {
             // 多生成一个点作为窃听者
             generateNodeWithUniform(true, 1);
             BroadcastID = 0;
 
             // 获取窃听者
-            auto Eavesdropper = nodes.back();
+            Eavesdropper = nodes.back();
             nodes.pop_back();
 
             // 选择阻塞点的位置
@@ -257,15 +266,16 @@ public:
                 ThreadPool pool(maxThread);
                 vector<future<long long>> res;
                 for (int rep = 0; rep < repNum; rep++) {
+                    bool need_Eavesdropper = rep < repNum / 2;
                     res.emplace_back(pool.enqueue([&] {
                         GlobalBroadcast bg(communicationRadius,
                                            fieldRadius,
                                            r, n,
                                            p_leaderElection,
                                            p_broadCase,
-                                           rep < repNum / 2 ? p_global : 1,
-                                           rep < repNum / 2);
-                        return bg.run();
+                                           need_Eavesdropper ? p_global : 1,
+                                           need_Eavesdropper);
+                        return bg.run(r);
                     }));
                 }
                 for (int i = 0; i < res.size(); i++) {
