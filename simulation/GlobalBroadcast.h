@@ -16,6 +16,7 @@ class GlobalBroadcast : public BaseCircle {
     vector<bool> bitmap;
     map<int, vector<int>> nxtRoundNodeID;
     set<pair<int, int>> finish; // gridID, BlockID
+    map<pair<int, int>, int> leader;
     int JammerID, BroadcastID, receiveNumber;
     long long JammerRound;
     Node Eavesdropper;
@@ -78,6 +79,7 @@ class GlobalBroadcast : public BaseCircle {
         for (const auto &x:Sender) {
             if (nodes[x].getState() == Active) {
                 leaderID.emplace_back(x);
+                leader[{nodes[x].getGridId(), nodes[x].getBlockId()}] = x;
             }
         }
         return leaderID;
@@ -92,12 +94,17 @@ class GlobalBroadcast : public BaseCircle {
         if (nxtRoundNodeID.count(gridID)) {
             // 统计出当前回合会进行发信的点
             vector<int> WorkNode;
+            set <int> saveLeader;
             map<int, int> BlockNum;
 
             const auto &ID_list = nxtRoundNodeID.find(gridID)->second;
             for (const auto &x : ID_list) {
-                WorkNode.emplace_back(x);
-                BlockNum[nodes[x].getBlockId()]++;
+                if (leader.count({nodes[x].getGridId(), nodes[x].getBlockId()})) {
+                    saveLeader.emplace(leader[{nodes[x].getGridId(), nodes[x].getBlockId()}]);
+                } else {
+                    WorkNode.emplace_back(x);
+                    BlockNum[nodes[x].getBlockId()]++;
+                }
             }
 
             // 执行领导人选举
@@ -108,12 +115,12 @@ class GlobalBroadcast : public BaseCircle {
             // Jammer 始终发送信号
             if (JammerID != -1)
                 Sender.emplace_back(nodes[JammerID]);
-
+            for (const auto &x:saveLeader) rt.emplace_back(x);
             for (const auto &x:rt) {
-                if (randomGen(rand_eng) <= p_global){
+                if (randomGen(rand_eng) <= p_global) {
                     Sender.emplace_back(nodes[x]);
                     finish.emplace(nodes[x].getGridId(), nodes[x].getBlockId());
-
+                    // 确定当前点要执行通信之后，这个区块不再进行传输
                 }
             }
 
@@ -150,7 +157,7 @@ public:
         // 把 safe zone 以内的点标记
         SINR sinr(R);
         double safeZoneR = get_SafeZoneR(sinr, r);
-        if(JammerID != -1){
+        if (JammerID != -1) {
             for (int i = 0; i < n; i++) {
                 if ((nodes[JammerID] - nodes[i]).get_disFromOri() <= safeZoneR) {
                     bitmap[i] = true;
@@ -170,7 +177,7 @@ public:
             for (int i = 0; i < n; i++) {
                 if (bitmap[i]
                     && i != JammerID
-                    && !finish.count({nodes[i].getGridId(), nodes[i].getBlockId()})){
+                    && !finish.count({nodes[i].getGridId(), nodes[i].getBlockId()})) {
                     nxtRoundNodeID[nodes[i].getGridId()].emplace_back(i);
                 }
             }
@@ -183,8 +190,8 @@ public:
             }
 
             TotRound += max_Round * 100;
-            cerr << "TotRound  -> " << TotRound << endl;
-            cerr << receiveNumber << endl;
+//            cerr << "TotRound  -> " << TotRound << endl;
+//            cerr << receiveNumber << endl;
         }
         return TotRound + JammerRound;
     }
@@ -218,6 +225,7 @@ public:
             p_global(p_global) {
 
         finish.clear();
+        leader.clear();
 
         if (need_Eavesdropper) {
             // 多生成一个点作为窃听者

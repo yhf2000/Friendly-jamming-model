@@ -1,255 +1,255 @@
 {"5000":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10943.2}]},
+      {"r":0.2,"val":7986.77}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":7150}]}],
+      {"r":0.2,"val":7302.4}]}],
 "5100":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11154.1}]},
+      {"r":0.2,"val":8085.58}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":6920}]}],
+      {"r":0.2,"val":7312.8}]}],
 "5200":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11534.2}]},
+      {"r":0.2,"val":8184.22}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":7540}]}],
+      {"r":0.2,"val":7453.4}]}],
 "5300":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":9683.6}]},
+      {"r":0.2,"val":8262.37}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":7810}]}],
+      {"r":0.2,"val":7522}]}],
 "5400":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11054.7}]},
+      {"r":0.2,"val":8220.6}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":7690}]}],
+      {"r":0.2,"val":7576.6}]}],
 "5500":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11133.4}]},
+      {"r":0.2,"val":8310.04}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":7540}]}],
+      {"r":0.2,"val":7673.8}]}],
 "5600":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10393.6}]},
+      {"r":0.2,"val":8446.41}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":7810}]}],
+      {"r":0.2,"val":7717.8}]}],
 "5700":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":9643.5}]},
+      {"r":0.2,"val":8533.18}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8200}]}],
+      {"r":0.2,"val":7808.2}]}],
 "5800":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10061.6}]},
+      {"r":0.2,"val":8579.61}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8010}]}],
+      {"r":0.2,"val":7860.6}]}],
 "5900":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10714.4}]},
+      {"r":0.2,"val":8606.42}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8190}]}],
+      {"r":0.2,"val":7911.2}]}],
 "6000":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10643.6}]},
+      {"r":0.2,"val":8673.58}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8250}]}],
+      {"r":0.2,"val":7996.4}]}],
 "6100":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10563.4}]},
+      {"r":0.2,"val":8759.02}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8000}]}],
+      {"r":0.2,"val":8039}]}],
 "6200":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":8876.59}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8138.6}]}],
+"6300":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":8940.62}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8301}]}],
+"6400":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":8794.79}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8284.2}]}],
+"6500":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9019.69}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8310.2}]}],
+"6600":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":8992.67}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8432.4}]}],
+"6700":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9097.66}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8456.4}]}],
+"6800":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9131.67}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8514}]}],
+"6900":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9287.48}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8622.6}]}],
+"7000":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9323.59}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8669.4}]}],
+"7100":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9403.07}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8775.2}]}],
+"7200":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9475.91}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8869}]}],
+"7300":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9491.31}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8841.2}]}],
+"7400":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9590.07}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8973.2}]}],
+"7500":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9688.55}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":8986.8}]}],
+"7600":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9440.43}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9110}]}],
+"7700":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9725.22}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9184.6}]}],
+"7800":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9477.26}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9233.6}]}],
+"7900":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9831.89}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9251.2}]}],
+"8000":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9662.67}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9361.2}]}],
+"8100":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":9966.31}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9425.2}]}],
+"8200":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10038.5}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9476.6}]}],
+"8300":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10096.4}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9565.2}]}],
+"8400":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10129.3}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9601.8}]}],
+"8500":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10249.3}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9733.8}]}],
+"8600":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10196.9}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9773.4}]}],
+"8700":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10306.8}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9868}]}],
+"8800":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10483.9}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9923.6}]}],
+"8900":[
+  {"name":"Global withJammer","data": [
+      {"r":0.2,"val":10215}]},
+  {"name":"Global withoutJammer","data": [
+      {"r":0.2,"val":9974.8}]}],
+"9000":[
   {"name":"Global withJammer","data": [
       {"r":0.2,"val":10434.9}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8210}]}],
-"6300":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":9963.3}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8370}]}],
-"6400":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10553.2}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8670}]}],
-"6500":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10793.2}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8760}]}],
-"6600":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11074.2}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8520}]}],
-"6700":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10723.7}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8780}]}],
-"6800":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10143.3}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8650}]}],
-"6900":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11533.1}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8740}]}],
-"7000":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11374.1}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8850}]}],
-"7100":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10014}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8960}]}],
-"7200":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":12454.8}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8530}]}],
-"7300":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10734}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9290}]}],
-"7400":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11804.4}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":8570}]}],
-"7500":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11142.5}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9180}]}],
-"7600":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":9264.4}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9190}]}],
-"7700":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10953}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9240}]}],
-"7800":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10733.6}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9260}]}],
-"7900":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10206}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9160}]}],
-"8000":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":12274.4}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9460}]}],
-"8100":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11143.4}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9510}]}],
-"8200":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":9873.1}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9940}]}],
-"8300":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10624.8}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10320}]}],
-"8400":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11124}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10080}]}],
-"8500":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11204.5}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9830}]}],
-"8600":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10253.2}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9970}]}],
-"8700":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":12364.8}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9460}]}],
-"8800":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11344.8}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9540}]}],
-"8900":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":9604.2}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9850}]}],
-"9000":[
-  {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10674.3}]},
-  {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9980}]}],
+      {"r":0.2,"val":10008.4}]}],
 "9100":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":10655.1}]},
+      {"r":0.2,"val":10577.1}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9900}]}],
+      {"r":0.2,"val":10116}]}],
 "9200":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11574.9}]},
+      {"r":0.2,"val":10690.1}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10960}]}],
+      {"r":0.2,"val":10198.2}]}],
 "9300":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11102}]},
+      {"r":0.2,"val":10726.1}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10120}]}],
+      {"r":0.2,"val":10221}]}],
 "9400":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":12023.7}]},
+      {"r":0.2,"val":10634.5}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":9980}]}],
+      {"r":0.2,"val":10277.2}]}],
 "9500":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11631.9}]},
+      {"r":0.2,"val":10760.7}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10880}]}],
+      {"r":0.2,"val":10321.8}]}],
 "9600":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11514.5}]},
+      {"r":0.2,"val":10790.2}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10940}]}],
+      {"r":0.2,"val":10420.2}]}],
 "9700":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11222.3}]},
+      {"r":0.2,"val":10965.1}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10650}]}],
+      {"r":0.2,"val":10492.2}]}],
 "9800":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11774.2}]},
+      {"r":0.2,"val":11052.9}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10760}]}],
+      {"r":0.2,"val":10542.2}]}],
 "9900":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11674.8}]},
+      {"r":0.2,"val":11211.1}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10840}]}],
+      {"r":0.2,"val":10666.2}]}],
 "10000":[
   {"name":"Global withJammer","data": [
-      {"r":0.2,"val":11152.1}]},
+      {"r":0.2,"val":11130.6}]},
   {"name":"Global withoutJammer","data": [
-      {"r":0.2,"val":10580}]}]}
+      {"r":0.2,"val":10788}]}]}
