@@ -14,21 +14,23 @@ protected:
     vector<Node> nodes;
     // 轮数统计
     long long RunRound;
+    // 网格的数量
+    int C;
 
     int BlockSize;
 
     // 获取所在的位置
     int getGrid(const Node &node) const {
         if (gridLength == -1) return -1;
-        int xv = ((node.getX() + CircleR) / gridLength) % 10;
-        int yv = ((node.getY() + CircleR) / gridLength) % 10;
-        return xv * 10 + yv;
+        int xv = ((node.getX() + CircleR) / gridLength) % C;
+        int yv = ((node.getY() + CircleR) / gridLength) % C;
+        return xv * C + yv;
     }
 
     int getBlock(const Node &node) const{
         if(gridLength == -1) return -1;
-        int xv = ((node.getX() + CircleR) / gridLength) / 10;
-        int yv = ((node.getY() + CircleR) / gridLength) / 10;
+        int xv = ((node.getX() + CircleR) / gridLength) / C;
+        int yv = ((node.getY() + CircleR) / gridLength) / C;
         int num = (CircleR * 2 + gridLength - 1) / gridLength; // 一行有多少块
         return xv * num + yv;
     }
@@ -74,9 +76,9 @@ public:
      * @param FieldRadius 场地半径
      * @param n 节点个数
      */
-    BaseCircle(int CommunicationRadius, int FieldRadius, int n, int gridLength = -1) :
+    BaseCircle(int CommunicationRadius, int FieldRadius, int n, int gridLength = -1, int C=10) :
             CircleR(FieldRadius), n(n), RunRound(0),
-            R(CommunicationRadius), gridLength(gridLength) {
+            R(CommunicationRadius), gridLength(gridLength), C(C) {
         BlockSize = (CircleR * 2 + gridLength - 1) / gridLength;
         BlockSize = BlockSize * BlockSize;
     }

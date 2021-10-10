@@ -39,8 +39,8 @@ def read_data(name):
     return np.array(X), np.array(Y), np.array(Z)
 
 
-def read_data_2(name, r=10):
-    data: dict = json.loads(open("GlobalTime.json").read())
+def read_data_2(name, r=10, m=''):
+    data: dict = json.loads(open("GlobalTime" + m + ".json").read())
 
     X = []
     Y = []

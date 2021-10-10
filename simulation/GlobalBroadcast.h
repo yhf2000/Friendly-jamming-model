@@ -12,7 +12,7 @@ using namespace std;
 
 class GlobalBroadcast : public BaseCircle {
 
-    double p_leaderElection, p_broadCast, p_global;
+    double p_leaderElection, p_global;
     vector<bool> bitmap;
     map<int, vector<int>> nxtRoundNodeID;
     set<pair<int, int>> finish; // gridID, BlockID
@@ -94,7 +94,7 @@ class GlobalBroadcast : public BaseCircle {
         if (nxtRoundNodeID.count(gridID)) {
             // 统计出当前回合会进行发信的点
             vector<int> WorkNode;
-            set <int> saveLeader;
+            set<int> saveLeader;
             map<int, int> BlockNum;
 
             const auto &ID_list = nxtRoundNodeID.find(gridID)->second;
@@ -160,7 +160,6 @@ public:
         if (JammerID != -1) {
             for (int i = 0; i < n; i++) {
                 if ((nodes[JammerID] - nodes[i]).get_disFromOri() <= safeZoneR) {
-                    bitmap[i] = true;
                     receiveNumber += 1;
                 }
             }
@@ -183,13 +182,13 @@ public:
             }
 
             long long max_Round = 0;
-            for (int i = 0; i < 99; i++) {
+            for (int i = 0; i < C * C; i++) {
                 RunRound = 0;
                 broadcast(i);
                 max_Round = max(max_Round, RunRound);
             }
 
-            TotRound += max_Round * 100;
+            TotRound += max_Round * C * C;
 //            cerr << "TotRound  -> " << TotRound << endl;
 //            cerr << receiveNumber << endl;
         }
@@ -214,14 +213,14 @@ public:
                     int r,
                     int n,
                     double p_leaderElection,
-                    double p_broadCase,
                     double p_global,
+                    int C,
                     bool need_Eavesdropper = true) :
             BaseCircle(communicationRadius,
                        fieldRadius, n,
-                       ceil(eps * communicationRadius / sqrt(2))),
+                       ceil(eps * communicationRadius / sqrt(2)),
+                       C),
             p_leaderElection(p_leaderElection),
-            p_broadCast(p_broadCase),
             p_global(p_global) {
 
         finish.clear();
@@ -258,47 +257,71 @@ public:
                         int fieldRadius,
                         int r,
                         double p_leaderElection,
-                        double p_broadCase,
                         const string &output_name,
                         Range<> n_Range,
                         Range<double> global_p_Range,
+                        Range<> C_Range,
                         int repNum) {
-        ofstream out(output_name);
 
-        statisticsPair<double, double> stat("Global", "withJammer", "withoutJammer");
-        out << "{";
-        R_for(n, n_Range) {
-            cerr << " n " << n << endl;
-            R_for_d(p_global, global_p_Range) {
-                cerr << " p " << p_global << endl;
+        R_for(C, C_Range) {
+            cerr << " C =" << C << endl;
+            ofstream out(output_name + "_with_C=" + to_string(C) + ".json");
+            statistics<double, double> withJammer("with"), without("without");
+
+            out << "{";
+            R_for(n, n_Range) {
+                cerr << " n " << n << endl;
+                R_for_d(p_global, global_p_Range) {
+                    cerr << " p " << p_global << endl;
+                    ThreadPool pool(maxThread);
+                    vector<future<long long>> res;
+                    for (int rep = 0; rep < repNum; rep++) {
+                        res.emplace_back(pool.enqueue([&] {
+                            GlobalBroadcast bg(communicationRadius,
+                                               fieldRadius,
+                                               r, n,
+                                               p_leaderElection,
+                                               p_global,
+                                               C,
+                                               true);
+                            return bg.run(r);
+                        }));
+                    }
+                    for (auto &re : res) {
+                        auto rt = re.get();
+                        withJammer.add(p_global, rt);
+                    }
+                }
+
                 ThreadPool pool(maxThread);
                 vector<future<long long>> res;
                 for (int rep = 0; rep < repNum; rep++) {
-                    bool need_Eavesdropper = rep < repNum / 2;
                     res.emplace_back(pool.enqueue([&] {
                         GlobalBroadcast bg(communicationRadius,
                                            fieldRadius,
                                            r, n,
                                            p_leaderElection,
-                                           p_broadCase,
-                                           need_Eavesdropper ? p_global : 1,
-                                           need_Eavesdropper);
+                                           1,
+                                           C,
+                                           false);
                         return bg.run(r);
                     }));
                 }
-                for (int i = 0; i < res.size(); i++) {
-                    auto rt = res[i].get();
-                    stat.add(i >= repNum / 2, p_global, rt);
+                for (auto &re : res) {
+                    auto rt = re.get();
+                    without.add(1, rt);
                 }
-            }
-            out << "\"" << n << "\":[\n";
-            stat.print(out);
-            out << "]";
-            if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
-            stat.clear();
-        }
-        out << "}";
 
+                out << "\"" << n << "\":[\n";
+                withJammer.print(out);
+                out << ",";
+                without.print(out);
+                out << "]";
+                if (n + n_Range.getStep() <= n_Range.getMax()) out << ",\n";
+                withJammer.clear();
+            }
+            out << "}";
+        }
     }
 };
 
