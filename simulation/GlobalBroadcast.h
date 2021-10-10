@@ -13,7 +13,7 @@ using namespace std;
 class GlobalBroadcast : public BaseCircle {
 
     double p_leaderElection, p_global;
-    vector<bool> bitmap;
+    vector<bool> bitmap, notSafe;
     map<int, vector<int>> nxtRoundNodeID;
     set<pair<int, int>> finish; // gridID, BlockID
     map<pair<int, int>, int> leader;
@@ -131,7 +131,7 @@ class GlobalBroadcast : public BaseCircle {
                     int rcvID = sinrCalculate.Listen(nodes[i], Sender);
                     if (rcvID != -1 && (JammerID == -1 || rcvID != 0)) {
                         bitmap[i] = true;
-                        receiveNumber++;
+                        if (!notSafe[i]) receiveNumber++;
                     }
                 }
             }
@@ -149,21 +149,24 @@ public:
         // 这个部分直接加到了 领导人选举和传播里面
 
         // 初始化 bitmap
-        bitmap.clear();
-        bitmap.resize(n, false);
-        for (int i = 0; i < n; i++) bitmap[i] = false;
+        bitmap.clear(), notSafe.clear();
+        bitmap.resize(n, false), notSafe.resize(n, false);
         receiveNumber = 0;
 
         // 把 safe zone 以内的点标记
         SINR sinr(R);
         double safeZoneR = get_SafeZoneR(sinr, r);
+
         if (JammerID != -1) {
             for (int i = 0; i < n; i++) {
                 if ((nodes[JammerID] - nodes[i]).get_disFromOri() <= safeZoneR) {
                     receiveNumber += 1;
+                    notSafe[i] = true;
                 }
             }
         }
+        // 广播起始点不在 SafeZone 内
+        if (notSafe[BroadcastID]) return -1;
 
         bitmap[BroadcastID] = true;
         receiveNumber += 1;
@@ -218,8 +221,7 @@ public:
                     bool need_Eavesdropper = true) :
             BaseCircle(communicationRadius,
                        fieldRadius, n,
-                       ceil(eps * communicationRadius / sqrt(2)),
-                       C),
+                       ceil(eps * communicationRadius / (2 * sqrt(2))), C),
             p_leaderElection(p_leaderElection),
             p_global(p_global) {
 
@@ -287,12 +289,16 @@ public:
                             return bg.run(r);
                         }));
                     }
+                    int step = 0;
                     for (auto &re : res) {
+                        cerr << "\r" << "[" << (++step) << "/" << repNum << "]";
                         auto rt = re.get();
-                        withJammer.add(p_global, rt);
+                        if (rt != -1)
+                            withJammer.add(p_global, rt);
                     }
+                    cerr << endl;
                 }
-
+                cerr << " without Jammer " << endl;
                 ThreadPool pool(maxThread);
                 vector<future<long long>> res;
                 for (int rep = 0; rep < repNum; rep++) {
@@ -307,10 +313,14 @@ public:
                         return bg.run(r);
                     }));
                 }
+                int step = 0;
                 for (auto &re : res) {
                     auto rt = re.get();
-                    without.add(1, rt);
+                    cerr << "\r" << "[" << (++step) << "/" << repNum << "]";
+                    if (rt != -1)
+                        without.add(1, rt);
                 }
+                cerr << endl;
 
                 out << "\"" << n << "\":[\n";
                 withJammer.print(out);
