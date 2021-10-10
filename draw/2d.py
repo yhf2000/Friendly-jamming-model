@@ -4,17 +4,17 @@ from getData import read_data_2
 
 plt.figure(figsize=(8, 5))
 
-i_list = [(0.2, 'b'), (0.3, 'g'), (0.4, 'r'), (0.5, 'c'), (0.6, 'y')]
+i_list = [0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5]
 
 
 for i in i_list:
-    X, Y = read_data_2("with", i[0], "_with_C=4")
-    plt.plot(X, Y, label='p=' + str(i[0]) + " with", color=i[1])
+    X, Y = read_data_2("with", i, "_with_C=10")
+    plt.plot(X, Y, label='p=' + str(i) + " with")
 
-X, Y = read_data_2("without", 1, "_with_C=4")
+X, Y = read_data_2("without", 1, "_with_C=10")
 plt.plot(X, Y, label='p=1 without', linestyle=':')
 
 
-plt.ylim(600, 2000)
-plt.legend(bbox_to_anchor=(1, 0.5))
+plt.ylim(0, 12000)
+plt.legend(bbox_to_anchor=(1, 0.47))
 plt.show()
