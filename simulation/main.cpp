@@ -31,9 +31,9 @@ int main() {
                         300,
                         10,
                         0.6,
-                        "n-GlobalTime",
+                        "n3-GlobalTime",
                         Range<>(5000, 10000, 200),
-                        Range<double>(0.2, 0.5, 0.05),
+                        Range<double>(0.4, 0.81, 0.05),
                         Range<>(10, 10, 1),
-                        1);
+                        2000);
 }

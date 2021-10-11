@@ -14,6 +14,7 @@ class GlobalBroadcast : public BaseCircle {
 
     double p_leaderElection, p_global;
     vector<bool> bitmap, notSafe;
+    vector<int> unUsedNode;
     map<int, vector<int>> nxtRoundNodeID;
     set<pair<int, int>> finish; // gridID, BlockID
     map<pair<int, int>, int> leader;
@@ -99,11 +100,12 @@ class GlobalBroadcast : public BaseCircle {
 
             const auto &ID_list = nxtRoundNodeID.find(gridID)->second;
             for (const auto &x : ID_list) {
-                if (leader.count({nodes[x].getGridId(), nodes[x].getBlockId()})) {
-                    saveLeader.emplace(leader[{nodes[x].getGridId(), nodes[x].getBlockId()}]);
+                const auto &nd = nodes[x];
+                if (leader.count({nd.getGridId(), nd.getBlockId()})) {
+                    saveLeader.emplace(leader[{nd.getGridId(), nd.getBlockId()}]);
                 } else {
                     WorkNode.emplace_back(x);
-                    BlockNum[nodes[x].getBlockId()]++;
+                    BlockNum[nd.getBlockId()]++;
                 }
             }
 
@@ -117,24 +119,30 @@ class GlobalBroadcast : public BaseCircle {
                 Sender.emplace_back(nodes[JammerID]);
             for (const auto &x:saveLeader) rt.emplace_back(x);
             for (const auto &x:rt) {
+                const auto &nd = nodes[x];
                 if (randomGen(rand_eng) <= p_global) {
-                    Sender.emplace_back(nodes[x]);
-                    finish.emplace(nodes[x].getGridId(), nodes[x].getBlockId());
+                    Sender.emplace_back(nd);
+                    finish.emplace(nd.getGridId(), nd.getBlockId());
                     // 确定当前点要执行通信之后，这个区块不再进行传输
                 }
             }
 
 
             // 检查所有没有收到消息的节点，判断是否能成功接收到消息
-            for (int i = 0; i < n; i++) {
-                if (!bitmap[i]) {
-                    int rcvID = sinrCalculate.Listen(nodes[i], Sender);
+            vector<int> ns, nw;
+            for (auto x:unUsedNode) {
+                if (!bitmap[x]) {
+                    int rcvID = sinrCalculate.Listen(nodes[x], Sender);
                     if (rcvID != -1 && (JammerID == -1 || rcvID != 0)) {
-                        bitmap[i] = true;
-                        if (!notSafe[i]) receiveNumber++;
+                        bitmap[x] = true, ns.emplace_back(x);
+                        if (!notSafe[x]) receiveNumber++;
                     }
                 }
             }
+            nw.resize(unUsedNode.size());
+            nw.resize(set_difference(unUsedNode.begin(), unUsedNode.end(),
+                                     ns.begin(), ns.end(), nw.begin()) - nw.begin());
+            swap(unUsedNode, nw);
             RunRound++;
         }
     }
@@ -149,7 +157,7 @@ public:
         // 这个部分直接加到了 领导人选举和传播里面
 
         // 初始化 bitmap
-        bitmap.clear(), notSafe.clear();
+        bitmap.clear(), notSafe.clear(), unUsedNode.clear();
         bitmap.resize(n, false), notSafe.resize(n, false);
         receiveNumber = 0;
 
@@ -170,6 +178,8 @@ public:
 
         bitmap[BroadcastID] = true;
         receiveNumber += 1;
+
+        for (int i = 0; i < n; i ++) if (!bitmap[i]) unUsedNode.emplace_back(i);
 
         long long TotRound = 0;
 
@@ -297,6 +307,20 @@ public:
                             withJammer.add(p_global, rt);
                     }
                     cerr << endl;
+
+//                    for (int rep = 0; rep < repNum; rep++) {
+//                        GlobalBroadcast bg(communicationRadius,
+//                                           fieldRadius,
+//                                           r, n,
+//                                           p_leaderElection,
+//                                           p_global,
+//                                           C,
+//                                           true);
+//                        auto rt = bg.run(r);
+//                        if (rt != -1)
+//                            withJammer.add(p_global, rt);
+//
+//                    }
                 }
                 cerr << " without Jammer " << endl;
                 ThreadPool pool(maxThread);
