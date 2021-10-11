@@ -142,7 +142,7 @@ class GlobalBroadcast : public BaseCircle {
             nw.resize(unUsedNode.size());
             nw.resize(set_difference(unUsedNode.begin(), unUsedNode.end(),
                                      ns.begin(), ns.end(), nw.begin()) - nw.begin());
-            swap(unUsedNode, nw);
+            unUsedNode.swap(nw);
             RunRound++;
         }
     }
