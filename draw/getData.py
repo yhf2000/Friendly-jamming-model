@@ -4,7 +4,7 @@ import numpy as np
 
 
 def read_data(name):
-    data: dict = json.loads(open("local_statistics.json").read())
+    data: dict = json.loads(open("n3-GlobalTime_with_C=10.json").read())
 
     X = []
     Y = []

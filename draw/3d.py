@@ -22,7 +22,7 @@ ax = fig.gca(projection='3d')
 #                        linewidth=0, antialiased=False)
 
 # Make data.
-X, Y, Z = read_data("Receive Great")
+X, Y, Z = read_data("with")
 
 # Plot the surface.
 surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
@@ -31,9 +31,9 @@ surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
 # Customize the z axis.
 ax.view_init(elev=30, azim=40)
 # ax.set_zlim(0.27, 0.32)
-ax.set_zlim(0.87, 0.89)
+ax.set_zlim(0, 20000)
 ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.04f'))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.0f'))
 
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.5, aspect=10)
